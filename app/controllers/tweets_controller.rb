@@ -2,8 +2,13 @@ class TweetsController < ApplicationController
   before_action :set_tweet, only: %i[ show edit update destroy ]
 
   # GET /tweets or /tweets.json
+
   def index
-    @tweets = Tweet.all
+    if params[:query].present?
+      @tweets = Tweet.where('description ILIKE ? OR user_name ILIKE ?', "%#{params[:query]}%", "%#{params[:query]}%").page(params[:page]).per(10)
+    else
+      @tweets = Tweet.page(params[:page]).per(10)
+    end
   end
 
   # GET /tweets/1 or /tweets/1.json
